@@ -7,4 +7,5 @@ urlpatterns = [
     path('tasks/', tasks, name='tasks'),
     path('logout/', signout, name='logout'),
     path('signin/', signin, name='signin'),
+    path('tasks/create', create_task, name="create_task")
 ]
