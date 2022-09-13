@@ -1,5 +1,4 @@
-from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
@@ -78,3 +77,25 @@ def create_task(request):
             })
         else:
             return redirect("tasks")
+
+def task_detail(request, task_id):
+    task = get_object_or_404(Task, pk=task_id, user = request.user)
+    if request.method == 'GET':
+        form= TaskForm(instance=task)
+        return render(request, 'task_detail.html', {
+            'form': form,
+            'task': task
+        })
+    else:
+        try:
+            form= TaskForm(request.POST,instance=task)
+            form.save()
+        
+        except ValueError:
+            return render(request, 'task_detail.html', {
+                'form': form,
+                'error': "Ocurrio un error al actualizar el sistema",
+                'task': task
+            })
+        else:
+            return redirect('tasks')
