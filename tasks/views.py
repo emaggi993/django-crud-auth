@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
+from django.utils import timezone
 from .forms import TaskForm
 from .models import Task
 # Create your views here.
@@ -32,7 +33,7 @@ def signup(request):
                 'error': 'Las contraseñas no coinciden'
             })
 def tasks(request):
-    tasks = Task.objects.filter(user= request.user)
+    tasks = Task.objects.filter(user= request.user, datecompleted__isnull= True)
     return render(request, 'tasks.html', {
         'tasks': tasks
     })
@@ -94,6 +95,20 @@ def task_detail(request, task_id):
         except ValueError:
             return render(request, 'task_detail.html', {
                 'form': form,
+                'error': "Ocurrio un error al actualizar el sistema",
+                'task': task
+            })
+        else:
+            return redirect('tasks')
+def task_completed(request, task_id):
+    task = get_object_or_404(Task, pk= task_id, user= request.user)
+    if request.method ==  'POST':
+        try:
+            task.datecompleted = timezone.now()
+            task.save()
+        except ValueError:
+            return render(request, 'task_detail.html', {
+                
                 'error': "Ocurrio un error al actualizar el sistema",
                 'task': task
             })
