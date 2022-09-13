@@ -5,6 +5,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.utils import timezone
 from .forms import TaskForm
 from .models import Task
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 
@@ -32,14 +33,25 @@ def signup(request):
                 'form': UserCreationForm,
                 'error': 'Las contraseñas no coinciden'
             })
+
+@login_required
 def tasks(request):
     tasks = Task.objects.filter(user= request.user, datecompleted__isnull= True)
     return render(request, 'tasks.html', {
         'tasks': tasks
     })
 
+@login_required
+def tasks_completed(request):
+    tasks = Task.objects.filter(user= request.user, datecompleted__isnull= False).order_by('-datecompleted')
+    return render(request, 'tasks_completed.html', {
+        'tasks': tasks
+    })
+
 def home(request):
     return render(request, 'home.html')
+
+@login_required
 def signout(request):
     logout(request)
     return redirect("/")
@@ -58,6 +70,7 @@ def signin(request):
         else:
             login(request, user)
             return redirect('/tasks')
+@login_required
 def create_task(request):
     if request.method == 'GET':
         return render(request, 'create_task.html', {
@@ -78,7 +91,7 @@ def create_task(request):
             })
         else:
             return redirect("tasks")
-
+@login_required
 def task_detail(request, task_id):
     task = get_object_or_404(Task, pk=task_id, user = request.user)
     if request.method == 'GET':
@@ -100,12 +113,28 @@ def task_detail(request, task_id):
             })
         else:
             return redirect('tasks')
+
+@login_required
 def task_completed(request, task_id):
     task = get_object_or_404(Task, pk= task_id, user= request.user)
     if request.method ==  'POST':
         try:
             task.datecompleted = timezone.now()
             task.save()
+        except ValueError:
+            return render(request, 'task_detail.html', {
+                
+                'error': "Ocurrio un error al actualizar el sistema",
+                'task': task
+            })
+        else:
+            return redirect('tasks')
+@login_required
+def task_deleted(request, task_id):
+    task = get_object_or_404(Task, pk= task_id, user= request.user)
+    if request.method ==  'POST':
+        try:
+            task.delete()
         except ValueError:
             return render(request, 'task_detail.html', {
                 
