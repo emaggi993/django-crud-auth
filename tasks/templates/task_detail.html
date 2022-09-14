@@ -1,19 +1,33 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-<form action="" method="POST">
-    {% csrf_token %}
-    {{form.as_p}}
-    <button>
-        Update
-    </button>
-</form>
-<form action="{% url 'task_completed' task.id %}" method="POST">
-    {% csrf_token %}
-    <button>
-        Completo
-    </button>
-</form>
+<main class="container">
+    <div class="row">
+        <section>
+            <div class="col-md-6">
+            <div class="display-5 py-3">Nueva tarea</div>
+            <div class="py-4">
+                <form action="" method="POST" class="form ">
+                    {% csrf_token %}
+                    {{form}}
+                    <!-- <label for="title" >Titulo: </label>
+                    <input type="text" class="form-control" name="title" id="title">
+                    <label for="description" >Descripcion: </label>
+                    <textarea  class="form-control" name="description" id="description" rows="3"></textarea>
+                    <label for="important" >Importante</label>
+                    <input type="checkbox"  name="important" id="important"> -->
+                    <!-- {{form.as_p}} -->
+                    <button class="btn btn-success btn-sm-6 form-control mt-2">
+                        Update
+                    </button>
+                </form>
+            </div>
+            
+        </div>
+        </section>
+    </div>
     
+</main>
+
+
 {% endblock content %}

@@ -2,13 +2,28 @@
 
 
 {% block content %}
-<h2>Create TASK</h2>
 
+<main class="conteiner">
+    <div class="row">
+        <div class="col-md-4 offset-md-4">
+            <div class="display-5 text-center">Crear tarea</div>
+
+            <form action="{% url 'create_task' %}" method="POST">
+                {% csrf_token %}
+                <div class="row">
+                    {{form}}
+                </div>
+                <div class="row">
+                    <button class="btn btn-success">Crear</button>
+                </div>
+                
+                
+                
 {{error}}
+            </form>
+            
+        </div>
+    </div>
+</main>
 
-<form action="{% url 'create_task' %}" method="POST">
-    {% csrf_token %}
-    {{form}}
-    <button>Save</button>
-</form>
 {% endblock %}

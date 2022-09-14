@@ -2,33 +2,45 @@
 
 
 {% block content %}
-<h2>TASK</h2>
+<main class="container py-5">
+    <div class="display-5 text-center">Tareas Pendientes</div>
 
-<a href="{% url 'create_task' %}">Create task</a>
-<ul>
-    {% for task in tasks %}
-    
-        <a href=" {% url 'task_detail' task.id %} ">
-            <li>
+    <a class="btn btn-dark" href="{% url 'create_task' %}">Crear tarea</a>
+
+    <ol class="list-group list-group-numbered py-3">
+        {% for task in tasks %}
+        <a href="{% url 'task_detail' task.id %}" class="list-group-item d-flex justify-content-between align-items-start py-2">
+          <div class="ms-2 me-auto">
             {% if task.important %}
-        <h3><strong>{{ task.title }}</strong> </h3>
-        {% else %}
-        <h3>{{ task.title }}</h3>
-        {% endif %}
-        
-        <p>{{ task.description }}</p>
-    </li>
+                <div class="display-6 fw-bold text-success">{{ task.title }}</div>
+            {% else %}
+                <div class="display-6 fw-bold">{{ task.title }}</div>
+            {% endif %}
+            
+            {{ task.description }}
+          </div>
+          <div >
+                <form action="{% url 'task_completed' task.id %}" method="POST">
+                    {% csrf_token %}
+                    <button class="btn btn-success btn-sm rounded-pill">
+                        <i class="fa-sharp fa-solid fa-check"></i>
+                    </button>
+                </form>
+                <form action="{% url 'task_deleted' task.id %}" method="POST">
+                    {% csrf_token %}
+                    <button class="btn btn-danger btn-sm rounded-pill">
+                        <i class="fa-sharp fa-solid fa-trash-can"></i>
+                    </button>
+                </form>
+            </div>
+            
+            
         </a>
-        <form action="{% url 'task_deleted' task.id %}" method="POST">
-            {% csrf_token %}
-            <button>
-                eliminar
-            </button>
-        </form>
+        {% endfor %}
+            
         
-    
-    
-    {% endfor %}
-</ul>
+        
+</main>
+
 
 {% endblock %}
