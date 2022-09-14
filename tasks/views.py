@@ -6,6 +6,7 @@ from django.utils import timezone
 from .forms import TaskForm
 from .models import Task
 from django.contrib.auth.decorators import login_required
+import traceback
 # Create your views here.
 
 
@@ -61,15 +62,22 @@ def signin(request):
             'form': AuthenticationForm
         })
     else:
-        user = authenticate( request, username= request.POST['username'], password= request.POST['password'])
-        if user is None:
-            return render(request, 'signin.html', {
-                'form': AuthenticationForm,
-                'error': 'usuario o contraseña incorrecta'
+        try:
+            user = authenticate( request, username= request.POST['username'], password= request.POST['password'])
+            if user is None:
+                return render(request, 'signin.html', {
+                    'form': AuthenticationForm,
+                    'error': 'usuario o contraseña incorrecta'
+                })
+            else:
+                login(request, user)
+                return redirect('/tasks')
+        except:
+            return render(request, 'create_task.html', {
+                'form': TaskForm,
+                'error': traceback.format_exc()
             })
-        else:
-            login(request, user)
-            return redirect('/tasks')
+
 @login_required
 def create_task(request):
     if request.method == 'GET':
