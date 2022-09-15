@@ -13,9 +13,12 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 import os
 import dj_database_url
+from dotenv import load_dotenv
+from environ import env
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+env.read_env(os.path.join(BASE_DIR, '.env'))
 
 
 # Quick-start development settings - unsuitable for production
@@ -84,7 +87,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         'default': dj_database_url.config(
-            default='postgres://postgres@localhost/postgres',
+            default=env('DATABASE_URL'),
             conn_max_age=600
         )
         # 'ENGINE': 'django.db.backends.sqlite3',

@@ -73,8 +73,8 @@ def signin(request):
                 login(request, user)
                 return redirect('/tasks')
         except:
-            return render(request, 'create_task.html', {
-                'form': TaskForm,
+            return render(request, 'signin.html', {
+                'form': AuthenticationForm,
                 'error': traceback.format_exc()
             })
 
